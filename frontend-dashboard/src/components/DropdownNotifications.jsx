@@ -56,7 +56,9 @@ function DropdownNotifications({
       </button>
 
       <Transition
-        className={`origin-top-right z-10 absolute top-full -mr-48 sm:mr-0 min-w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 py-1.5 rounded-lg shadow-lg overflow-hidden mt-1 ${align === 'right' ? 'right-0' : 'left-0'}`}
+        className={`z-10 absolute -mr-48 sm:mr-0 min-w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 py-1.5 rounded-lg shadow-lg overflow-hidden ${
+          align === 'top' ? 'bottom-full origin-bottom mb-2' : 'top-full origin-top-right mt-1'
+        } ${align === 'right' ? 'right-0' : 'left-0'}`}
         show={dropdownOpen}
         enter="transition ease-out duration-200 transform"
         enterStart="opacity-0 -translate-y-2"

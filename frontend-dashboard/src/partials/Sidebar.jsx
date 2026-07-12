@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import UserMenu from '../components/DropdownProfile';
-import SearchModal from '../components/ModalSearch';
-import Notifications from '../components/DropdownNotifications';
-import Help from '../components/DropdownHelp';
-import ThemeToggle from '../components/ThemeToggle';
 function Sidebar({
   sidebarOpen,
   setSidebarOpen,
@@ -24,7 +19,6 @@ function Sidebar({
 
   const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
   const [sidebarExpanded, setSidebarExpanded] = useState(storedSidebarExpanded === null ? false : storedSidebarExpanded === "true");
-  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   // close on click outside
   useEffect(() => {
@@ -85,7 +79,7 @@ function Sidebar({
       <div
         id="sidebar"
         ref={sidebar}
-        className={`flex lg:flex! flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-[100dvh] overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:w-64! shrink-0 bg-white dark:bg-gray-800 p-4 transition-all duration-200 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} ${variant === 'v2' ? 'border-r border-gray-200 dark:border-gray-700/60' : 'rounded-r-2xl shadow-xs'}`}
+        className={`flex lg:flex! flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-[100dvh] w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:w-64! shrink-0 bg-white dark:bg-gray-800 p-4 transition-all duration-200 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} ${variant === 'v2' ? 'border-r border-gray-200 dark:border-gray-700/60' : 'rounded-r-2xl shadow-xs'}`}
       >
         {/* Sidebar header */}
         <div className="flex justify-between mb-10 pr-3 sm:px-2">
@@ -121,7 +115,7 @@ function Sidebar({
         </div>
 
         {/* Links */}
-        <div className="space-y-8">
+        <div className="space-y-8 overflow-y-auto no-scrollbar flex-1">
           <div>
             <h3 className="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3 mb-3">
               <span className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">•••</span>
@@ -237,40 +231,6 @@ function Sidebar({
                 </NavLink>
               </li>
             </ul>
-          </div>
-        </div>
-
-        {/* Profile Section & Tools */}
-        <div className="mt-auto pt-8">
-          {/* Tools Row */}
-          <div className={`flex flex-wrap items-center justify-center gap-3 px-3 pb-4 transition-all duration-200 ${sidebarExpanded || sidebarOpen ? 'lg:justify-between' : 'lg:flex-col lg:gap-4'}`}>
-            <div>
-              <button
-                className={`w-8 h-8 flex items-center justify-center hover:bg-gray-100 lg:hover:bg-gray-200 dark:hover:bg-gray-700/50 dark:lg:hover:bg-gray-800 rounded-full ${searchModalOpen && 'bg-gray-200 dark:bg-gray-800'}`}
-                onClick={(e) => { e.stopPropagation(); setSearchModalOpen(true); }}
-                aria-controls="search-modal"
-              >
-                <span className="sr-only">Search</span>
-                <svg
-                  className="fill-current text-gray-500/80 dark:text-gray-400/80"
-                  width={16}
-                  height={16}
-                  viewBox="0 0 16 16"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M7 14c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7ZM7 2C4.243 2 2 4.243 2 7s2.243 5 5 5 5-2.243 5-5-2.243-5-5-5Z" />
-                  <path d="m13.314 11.9 2.393 2.393a.999.999 0 1 1-1.414 1.414L11.9 13.314a8.019 8.019 0 0 0 1.414-1.414Z" />
-                </svg>
-              </button>
-              <SearchModal id="search-modal" searchId="search" modalOpen={searchModalOpen} setModalOpen={setSearchModalOpen} />
-            </div>
-            <Notifications align={sidebarExpanded || sidebarOpen ? "right" : "left"} />
-            <Help align={sidebarExpanded || sidebarOpen ? "right" : "left"} />
-            <ThemeToggle />
-          </div>
-
-          <div className="border-t border-gray-200 dark:border-gray-700/60 pt-4">
-            <UserMenu align="top" />
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { api } from '../utils/api';
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
 import FilterButton from '../components/DropdownFilter';
@@ -8,20 +9,39 @@ import DashboardCard01 from '../partials/dashboard/DashboardCard01';
 import DashboardCard02 from '../partials/dashboard/DashboardCard02';
 import DashboardCard03 from '../partials/dashboard/DashboardCard03';
 import DashboardCard04 from '../partials/dashboard/DashboardCard04';
-import DashboardCard05 from '../partials/dashboard/DashboardCard05';
-import DashboardCard06 from '../partials/dashboard/DashboardCard06';
-import DashboardCard07 from '../partials/dashboard/DashboardCard07';
-import DashboardCard08 from '../partials/dashboard/DashboardCard08';
-import DashboardCard09 from '../partials/dashboard/DashboardCard09';
-import DashboardCard10 from '../partials/dashboard/DashboardCard10';
-import DashboardCard11 from '../partials/dashboard/DashboardCard11';
-import DashboardCard12 from '../partials/dashboard/DashboardCard12';
-import DashboardCard13 from '../partials/dashboard/DashboardCard13';
+// import DashboardCard05 from '../partials/dashboard/DashboardCard05';
+// import DashboardCard06 from '../partials/dashboard/DashboardCard06';
+// import DashboardCard07 from '../partials/dashboard/DashboardCard07';
+// import DashboardCard08 from '../partials/dashboard/DashboardCard08';
+// import DashboardCard09 from '../partials/dashboard/DashboardCard09';
+// import DashboardCard10 from '../partials/dashboard/DashboardCard10';
+// import DashboardCard11 from '../partials/dashboard/DashboardCard11';
+// import DashboardCard12 from '../partials/dashboard/DashboardCard12';
+// import DashboardCard13 from '../partials/dashboard/DashboardCard13';
 
 function Dashboard() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { profile } = useAuth();
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get('/api/analytics/summary');
+        if (res.success) {
+          setStats(res.data.summary);
+        }
+      } catch (err) {
+        console.error('Failed to fetch stats', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -114,19 +134,23 @@ function Dashboard() {
 
             {/* Cards */}
             <div className="grid grid-cols-12 gap-6">
-              <DashboardCard01 />
-              <DashboardCard02 />
-              <DashboardCard03 />
-              <DashboardCard04 />
-              <DashboardCard05 />
-              <DashboardCard06 />
-              <DashboardCard07 />
-              <DashboardCard08 />
-              <DashboardCard09 />
-              <DashboardCard10 />
-              <DashboardCard11 />
-              <DashboardCard12 />
-              <DashboardCard13 />
+              {loading ? (
+                <div className="col-span-full flex justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-violet-500"></div>
+                </div>
+              ) : stats ? (
+                <>
+                  <DashboardCard01 stats={stats} />
+                  <DashboardCard02 stats={stats} />
+                  <DashboardCard03 stats={stats} />
+                  <DashboardCard04 stats={stats} />
+                </>
+              ) : (
+                <div className="col-span-full text-center py-12 text-red-500 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                  <p className="font-medium mb-2">Failed to load dashboard statistics.</p>
+                  <p className="text-sm">Please make sure the backend is running and the analytics endpoint is accessible.</p>
+                </div>
+              )}
             </div>
           </div>
           
