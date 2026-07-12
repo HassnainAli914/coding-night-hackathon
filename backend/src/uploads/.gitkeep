@@ -1,0 +1,3 @@
+// Uploads directory placeholder
+// This directory is reserved for file upload handling (profile images, documents, etc.)
+// Supabase Storage is recommended for production file storage.

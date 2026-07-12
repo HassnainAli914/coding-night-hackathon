@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.ts"
+    }
+  ],
+  "functions": {
+    "api/**/*.ts": {
+      "includeFiles": "node_modules/**"
+    }
+  }
+}
