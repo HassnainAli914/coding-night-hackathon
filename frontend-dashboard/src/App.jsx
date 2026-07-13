@@ -25,6 +25,7 @@ import PublicAsset from './pages/PublicAsset';
 import PublicAssetsList from './pages/PublicAssetsList';
 import TrackTicket from './pages/TrackTicket';
 import DashboardPublicAssetsList from './pages/DashboardPublicAssetsList';
+import DashboardPublicAsset from './pages/DashboardPublicAsset';
 import DashboardTrackTicket from './pages/DashboardTrackTicket';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import TechnicianConsole from './pages/TechnicianConsole';
@@ -95,6 +96,11 @@ function App() {
         <Route path="/dashboard/public/assets" element={
           <PrivateRoute allowedRoles={['admin', 'technician', 'worker', 'client', 'reporter', 'student', 'teacher']}>
             <DashboardPublicAssetsList />
+          </PrivateRoute>
+        } />
+        <Route path="/dashboard/public/asset/:id" element={
+          <PrivateRoute allowedRoles={['admin', 'technician', 'worker', 'client', 'reporter', 'student', 'teacher']}>
+            <DashboardPublicAsset />
           </PrivateRoute>
         } />
         <Route path="/dashboard/track/:ticketId?" element={

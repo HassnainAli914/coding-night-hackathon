@@ -135,10 +135,10 @@ function PublicAssetsList({ isDashboardMode = false }) {
 
                     <div className="flex gap-2">
                       <Link 
-                        to={`/public/asset/${asset.id}`}
+                        to={isDashboardMode ? `/dashboard/public/asset/${asset.id}` : `/public/asset/${asset.id}`}
                         className="flex-1 bg-gray-50 text-violet-600 border border-violet-100 font-bold py-3 rounded-xl hover:bg-violet-600 hover:text-white transition-all shadow-sm hover:shadow-md text-center group-hover:bg-violet-50"
                       >
-                        View &amp; Report
+                        View Details
                       </Link>
                       <button
                         onClick={() => setQrAsset(asset)}
@@ -182,7 +182,7 @@ function PublicAssetsList({ isDashboardMode = false }) {
                 <button onClick={() => copyLink(qrAsset.id)} className="flex-1 bg-gray-50 text-gray-700 border border-gray-200 font-bold py-2.5 rounded-xl hover:bg-gray-100 transition-colors text-sm">
                   Copy Link
                 </button>
-                <Link to={`/public/asset/${qrAsset.id}`} className="flex-1 bg-violet-600 text-white font-bold py-2.5 rounded-xl hover:bg-violet-700 transition-colors text-sm text-center flex items-center justify-center">
+                <Link to={isDashboardMode ? `/dashboard/public/asset/${qrAsset.id}` : `/public/asset/${qrAsset.id}`} className="flex-1 bg-violet-600 text-white font-bold py-2.5 rounded-xl hover:bg-violet-700 transition-colors text-sm text-center flex items-center justify-center">
                   View Asset
                 </Link>
               </div>

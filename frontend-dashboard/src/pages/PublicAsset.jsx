@@ -5,7 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import Header from '../components/landing/ui/header';
 import Footer from '../components/landing/ui/footer';
 
-function PublicAsset() {
+function PublicAsset({ isDashboardMode = false }) {
   const { id } = useParams();
   const [asset, setAsset] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -215,10 +215,10 @@ function PublicAsset() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900 font-sans">
-      <Header isPublicRoute={true} />
+    <div className={`flex min-h-screen flex-col bg-gray-50 text-gray-900 font-sans ${isDashboardMode ? 'w-full' : ''}`}>
+      {!isDashboardMode && <Header isPublicRoute={true} />}
       
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-28 md:pt-36 lg:pt-40">
+      <main className={`flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-8 ${isDashboardMode ? 'pt-8' : 'pt-28 md:pt-36 lg:pt-40'}`}>
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           
@@ -504,7 +504,7 @@ function PublicAsset() {
         )}
 
       </main>
-      <Footer border={true} />
+      {!isDashboardMode && <Footer border={true} />}
     </div>
   );
 }
