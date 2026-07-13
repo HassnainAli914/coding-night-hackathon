@@ -231,6 +231,38 @@ function Sidebar({
                 </NavLink>
               </li>
             </ul>
+            
+            {/* Public Tools Category */}
+            <div className="mt-8">
+              <h3 className="text-xs uppercase text-slate-500 font-semibold mb-3">
+                <span className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">
+                  •••
+                </span>
+                <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">Public Tools</span>
+              </h3>
+              <ul className="mt-3">
+                <li className={navItemClass('/dashboard/public/assets')}>
+                  <NavLink to="/dashboard/public/assets" className={navLinkClass('/dashboard/public/assets')}>
+                    <div className="flex items-center">
+                      <svg className={navIconClass('/dashboard/public/assets')} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                      </svg>
+                      <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Public Assets</span>
+                    </div>
+                  </NavLink>
+                </li>
+                <li className={navItemClass('/dashboard/track')}>
+                  <NavLink to="/dashboard/track" className={navLinkClass('/dashboard/track')}>
+                    <div className="flex items-center">
+                      <svg className={navIconClass('/dashboard/track')} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                      </svg>
+                      <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Track Ticket</span>
+                    </div>
+                  </NavLink>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../utils/api';
+import { QRCodeSVG } from 'qrcode.react';
+import Header from '../components/landing/ui/header';
+import Footer from '../components/landing/ui/footer';
 
 function PublicAsset() {
   const { id } = useParams();
@@ -34,8 +37,10 @@ function PublicAsset() {
 
   // Submit states
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [submittedTicket, setSubmittedTicket] = useState(null);
+  const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
+  const [createdTicketId, setCreatedTicketId] = useState(null);
+
+  const [showQr, setShowQr] = useState(false);
 
   useEffect(() => {
     const fetchAsset = async () => {
@@ -54,6 +59,11 @@ function PublicAsset() {
     };
     fetchAsset();
   }, [id]);
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/public/asset/${id}`);
+    alert('Link copied to clipboard!');
+  };
 
   // Step 1: Submit complaint to AI triage
   const handleTriage = async (e) => {
@@ -155,8 +165,8 @@ function PublicAsset() {
       });
 
       if (res.success) {
-        setSubmitted(true);
-        setSubmittedTicket(res.data?.ticket);
+        setIsSubmitSuccess(true);
+        setCreatedTicketId(res.data?.ticket?.issue_number);
       } else {
         alert(res.message || 'Failed to submit issue');
       }
@@ -168,8 +178,8 @@ function PublicAsset() {
   };
 
   const resetForm = () => {
-    setSubmitted(false);
-    setSubmittedTicket(null);
+    setIsSubmitSuccess(false);
+    setCreatedTicketId(null);
     setTriageResult(null);
     setIssueDescription("");
     setReporterName("");
@@ -205,20 +215,14 @@ function PublicAsset() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex flex-col font-sans">
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 p-5 text-center shadow-sm sticky top-0 z-10">
-        <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600 tracking-tight">
-          MaintainIQ
-        </h1>
-      </header>
+    <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900 font-sans">
+      <Header isPublicRoute={true} />
       
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 mt-4 md:mt-8">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-28 md:pt-36 lg:pt-40">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           
-          {/* Left Column: Asset Details */}
           <div className="lg:col-span-5 flex flex-col lg:sticky lg:top-24 lg:self-start">
-            {/* Status Card */}
             <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-3xl shadow-xl border border-violet-500/30 p-6 text-center text-white relative overflow-hidden transform transition-all hover:scale-[1.01]">
               <div className="absolute top-0 right-0 w-40 h-40 bg-white opacity-5 rounded-full blur-2xl -mr-10 -mt-10"></div>
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full blur-xl -ml-10 -mb-10"></div>
@@ -242,7 +246,6 @@ function PublicAsset() {
               </div>
             </div>
 
-            {/* Info List */}
             <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-lg border border-white p-5 mt-4">
               <div className="flex justify-between py-2 border-b border-gray-100/50">
                 <span className="text-gray-500 font-medium">Location</span>
@@ -256,16 +259,23 @@ function PublicAsset() {
                 <span className="text-gray-500 font-medium">Condition</span>
                 <span className="font-bold text-gray-800 text-right">{asset.condition}</span>
               </div>
+
+              <div className="mt-4 pt-4 border-t border-gray-100/50">
+                <button
+                  onClick={() => setShowQr(true)}
+                  className="w-full flex items-center justify-center gap-2 bg-gray-50 text-gray-700 border border-gray-200 font-bold py-2.5 rounded-xl hover:bg-gray-100 transition-colors text-sm shadow-sm"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+                  Show QR Label
+                </button>
+              </div>
             </div>
           </div>
           
-          {/* Right Column: Interactive Flow */}
           <div className="lg:col-span-7 flex flex-col">
 
-        {/* ── Report Issue Flow ──────────────────────── */}
-        {!submitted ? (
+        {!isSubmitSuccess ? (
           <>
-            {/* Step 1: Describe the issue */}
             {!triageResult ? (
               <div className="bg-white rounded-3xl shadow-xl shadow-violet-100/50 border border-violet-50 p-6 md:p-8 mb-8 transform transition-all duration-300">
                 <h3 className="font-extrabold text-2xl text-gray-800 mb-2">Report an Issue</h3>
@@ -313,7 +323,6 @@ function PublicAsset() {
                 </form>
               </div>
             ) : (
-              /* Step 2: AI Triage Preview — editable before submit */
               <div className="bg-white rounded-3xl shadow-xl shadow-violet-100/50 border border-violet-50 p-6 md:p-8 mb-8 transform transition-all duration-300">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 bg-gradient-to-br from-violet-100 to-indigo-100 rounded-2xl flex items-center justify-center shadow-inner">
@@ -322,14 +331,12 @@ function PublicAsset() {
                   <h3 className="font-extrabold text-2xl text-gray-800">AI Triage Results</h3>
                 </div>
 
-                {/* Warning banner if critical */}
                 {triageResult.warning && (
                   <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 text-sm text-red-700 font-medium shadow-sm">
                     <strong>⚠️ Warning:</strong> {triageResult.warning}
                   </div>
                 )}
 
-                {/* AI analysis cards */}
                 <div className="bg-gray-50 rounded-2xl p-5 mb-6 space-y-5 text-base border border-gray-100">
                   <div>
                     <span className="text-gray-500 text-xs uppercase font-bold tracking-wider block mb-2">Structured Description</span>
@@ -382,7 +389,6 @@ function PublicAsset() {
                   )}
                 </div>
 
-                {/* Editable fields */}
                 <form onSubmit={handleSubmitIssue} className="space-y-4">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1.5">Issue Title</label>
@@ -394,17 +400,7 @@ function PublicAsset() {
                       required
                     />
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1.5">Category</label>
-                      <input
-                        type="text"
-                        className="w-full bg-gray-50 border-gray-200 rounded-xl focus:ring-violet-500 focus:border-violet-500 p-3 text-base transition-colors"
-                        value={editedCategory}
-                        onChange={(e) => setEditedCategory(e.target.value)}
-                        required
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 gap-4">
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-1.5">Priority</label>
                       <select
@@ -448,7 +444,6 @@ function PublicAsset() {
             )}
           </>
         ) : (
-          /* Step 3: Success */
           <div className="bg-white rounded-3xl shadow-xl shadow-green-100/50 border border-green-50 p-8 text-center mb-8 transform transition-all duration-300">
             <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-200">
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -456,17 +451,17 @@ function PublicAsset() {
               </svg>
             </div>
             <h3 className="font-extrabold text-2xl text-gray-800 mb-2">Report Submitted Successfully!</h3>
-            {submittedTicket && (
+            {createdTicketId && (
               <p className="text-base text-gray-600 mb-2">
-                Ticket ID: <span className="font-mono font-bold text-violet-600 bg-violet-50 px-2 py-1 rounded">{submittedTicket.issue_number}</span>
+                Ticket ID: <span className="font-mono font-bold text-violet-600 bg-violet-50 px-2 py-1 rounded">{createdTicketId}</span>
               </p>
             )}
             <p className="text-base text-gray-500 mb-8 max-w-md mx-auto">Thank you. The maintenance team has been notified and a ticket has been generated. You can track its status anytime.</p>
             
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              {submittedTicket && (
+              {createdTicketId && (
                 <Link
-                  to={`/track/${submittedTicket.issue_number}`}
+                  to={`/track/${createdTicketId}`}
                   className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold py-3.5 rounded-xl hover:from-violet-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg text-center"
                 >
                   Track Your Ticket
@@ -481,9 +476,35 @@ function PublicAsset() {
             </div>
           </div>
         )}
+          </div>
         </div>
-        </div>
+
+        {/* QR Modal */}
+        {showQr && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setShowQr(false)}></div>
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden z-10 transform transition-all p-6 border border-gray-100">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="font-bold text-gray-800 text-lg leading-tight">{asset.name}</h3>
+                  <p className="text-gray-500 text-sm mt-1">{asset.code} · {asset.location || 'No Location'}</p>
+                </div>
+                <button onClick={() => setShowQr(false)} className="text-gray-400 hover:text-gray-600 p-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
+              <div className="flex justify-center bg-gray-50 p-6 rounded-2xl mb-5 border border-gray-100">
+                <QRCodeSVG value={`${window.location.origin}/public/asset/${asset.id}`} size={180} level="H" />
+              </div>
+              <button onClick={copyLink} className="w-full bg-gray-50 text-gray-700 border border-gray-200 font-bold py-3 rounded-xl hover:bg-gray-100 transition-colors text-sm">
+                Copy Link to Clipboard
+              </button>
+            </div>
+          </div>
+        )}
+
       </main>
+      <Footer border={true} />
     </div>
   );
 }

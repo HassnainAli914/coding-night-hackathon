@@ -22,7 +22,10 @@ import Issues from './pages/Issues';
 import ReportIssue from './pages/ReportIssue';
 import AssetDetails from './pages/AssetDetails';
 import PublicAsset from './pages/PublicAsset';
+import PublicAssetsList from './pages/PublicAssetsList';
 import TrackTicket from './pages/TrackTicket';
+import DashboardPublicAssetsList from './pages/DashboardPublicAssetsList';
+import DashboardTrackTicket from './pages/DashboardTrackTicket';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import TechnicianConsole from './pages/TechnicianConsole';
 import MaintenanceRecords from './pages/MaintenanceRecords';
@@ -82,12 +85,23 @@ function App() {
             <AssetDetails />
           </PrivateRoute>
         } />
+        <Route path="/public/assets" element={<PublicAssetsList />} />
         <Route path="/public/asset/:id" element={<PublicAsset />} />
         <Route path="/track/:ticketId?" element={<TrackTicket />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/dashboard/public/assets" element={
+          <PrivateRoute allowedRoles={['admin', 'technician', 'worker', 'client', 'reporter', 'student', 'teacher']}>
+            <DashboardPublicAssetsList />
+          </PrivateRoute>
+        } />
+        <Route path="/dashboard/track/:ticketId?" element={
+          <PrivateRoute allowedRoles={['admin', 'technician', 'worker', 'client', 'reporter', 'student', 'teacher']}>
+            <DashboardTrackTicket />
+          </PrivateRoute>
+        } />
         <Route path="/settings" element={
           <PrivateRoute allowedRoles={['admin', 'technician', 'worker', 'client', 'reporter', 'student', 'teacher']}>
             <Settings />

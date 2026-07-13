@@ -11,6 +11,7 @@ import FeaturesPlanet from "../components/landing/features-planet";
 import Testimonials from "../components/Testimonials";
 import Cta from "../components/landing/cta";
 import Pricing from "../components/Pricing";
+import PublicTools from "../components/landing/public-tools";
 import Separator from "../components/landing/ui/separator";
 
 export default function Landing() {
@@ -34,6 +35,8 @@ export default function Landing() {
         <FeaturesPlanet />
         <Separator />
         <Pricing />
+        <Separator />
+        <PublicTools />
         <Separator />
         <Testimonials />
         <Separator />

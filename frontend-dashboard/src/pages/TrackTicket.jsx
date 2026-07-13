@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../utils/api';
+import Header from '../components/landing/ui/header';
+import Footer from '../components/landing/ui/footer';
 
-function TrackTicket() {
+export default function TrackTicket({ isDashboardMode = false }) {
   const { ticketId } = useParams();
   const navigate = useNavigate();
   
@@ -28,10 +30,10 @@ function TrackTicket() {
       if (res.success && res.data?.ticket) {
         setTicket(res.data.ticket);
       } else {
-        setError('Ticket not found. Please check the ID and try again.');
+        setError(res.message || 'Ticket not found.');
       }
     } catch (err) {
-      setError('Could not fetch ticket details. It might not exist.');
+      setError('An error occurred while fetching the ticket.');
     } finally {
       setLoading(false);
     }
@@ -62,14 +64,10 @@ function TrackTicket() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex flex-col font-sans">
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 p-5 text-center shadow-sm sticky top-0 z-10">
-        <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600 tracking-tight">
-          MaintainIQ
-        </h1>
-      </header>
+    <div className={`flex flex-col ${isDashboardMode ? 'w-full' : 'min-h-screen overflow-hidden supports-[overflow:clip]:overflow-clip bg-gray-50 text-gray-900 font-sans'}`}>
+      {!isDashboardMode && <Header isPublicRoute={true} />}
       
-      <main className="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8 mt-4 md:mt-8">
+      <main className={`flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-8 flex flex-col gap-8 ${isDashboardMode ? 'pt-8' : 'pt-28 md:pt-36 lg:pt-40'}`}>
         {/* Search Section */}
         <div className="bg-white rounded-3xl shadow-xl shadow-violet-100/50 border border-violet-50 p-6 md:p-8 transform transition-all duration-300 hover:shadow-2xl">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Track Your Ticket</h2>
@@ -161,8 +159,7 @@ function TrackTicket() {
           </div>
         )}
       </main>
+      {!isDashboardMode && <Footer border={true} />}
     </div>
   );
 }
-
-export default TrackTicket;
