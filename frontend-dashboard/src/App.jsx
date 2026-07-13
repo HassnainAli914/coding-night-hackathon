@@ -5,6 +5,8 @@ import {
   useLocation
 } from 'react-router-dom';
 import PublicDashboardRedirectRoute from './components/PublicDashboardRedirectRoute';
+import DashboardPublicRedirectRoute from './components/DashboardPublicRedirectRoute';
+import PrivateRoute from './components/PrivateRoute';
 
 import './css/style.css';
 
@@ -95,19 +97,19 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/dashboard/public/assets" element={
-          <PrivateRoute allowedRoles={['admin', 'technician', 'worker', 'client', 'reporter', 'student', 'teacher']}>
+          <DashboardPublicRedirectRoute>
             <DashboardPublicAssetsList />
-          </PrivateRoute>
+          </DashboardPublicRedirectRoute>
         } />
         <Route path="/dashboard/public/asset/:id" element={
-          <PrivateRoute allowedRoles={['admin', 'technician', 'worker', 'client', 'reporter', 'student', 'teacher']}>
+          <DashboardPublicRedirectRoute>
             <DashboardPublicAsset />
-          </PrivateRoute>
+          </DashboardPublicRedirectRoute>
         } />
         <Route path="/dashboard/track/:ticketId?" element={
-          <PrivateRoute allowedRoles={['admin', 'technician', 'worker', 'client', 'reporter', 'student', 'teacher']}>
+          <DashboardPublicRedirectRoute>
             <DashboardTrackTicket />
-          </PrivateRoute>
+          </DashboardPublicRedirectRoute>
         } />
         <Route path="/settings" element={
           <PrivateRoute allowedRoles={['admin', 'technician', 'worker', 'client', 'reporter', 'student', 'teacher']}>

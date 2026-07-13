@@ -44,7 +44,7 @@ function PublicAssetsList({ isDashboardMode = false }) {
   };
 
   return (
-    <div className={`flex flex-col ${isDashboardMode ? 'w-full' : 'min-h-screen overflow-hidden supports-[overflow:clip]:overflow-clip bg-gray-50 text-gray-900 font-sans'}`}>
+    <div className={`flex flex-col ${isDashboardMode ? 'w-full text-gray-900 dark:text-gray-100' : 'min-h-screen overflow-hidden supports-[overflow:clip]:overflow-clip bg-gray-50 text-gray-900 font-sans'}`}>
       {!isDashboardMode && (
         <Header 
           isPublicRoute={true} 
@@ -67,9 +67,9 @@ function PublicAssetsList({ isDashboardMode = false }) {
 
       <main className={`grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-8 flex flex-col gap-8 ${isDashboardMode ? 'pt-8' : 'pt-28 md:pt-36 lg:pt-40'}`}>
         {/* Header Section */}
-        <div className="bg-white rounded-3xl shadow-xl shadow-violet-100/50 border border-violet-50 p-6 md:p-8 transform transition-all duration-300">
-          <h2 className="text-3xl font-extrabold text-gray-800 mb-2">Public Asset Directory</h2>
-          <p className="text-base text-gray-500">Find an asset to view details or report an issue.</p>
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl shadow-violet-100/50 dark:shadow-none border border-violet-50 dark:border-gray-700 p-6 md:p-8 transform transition-all duration-300">
+          <h2 className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 mb-2">Public Asset Directory</h2>
+          <p className="text-base text-gray-500 dark:text-gray-400">Find an asset to view details or report an issue.</p>
         </div>
 
         {/* Loading / Error States */}
@@ -80,10 +80,10 @@ function PublicAssetsList({ isDashboardMode = false }) {
         )}
 
         {error && !loading && (
-          <div className="bg-red-50 border border-red-200 rounded-3xl p-8 text-center text-red-700 shadow-sm">
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-3xl p-8 text-center text-red-700 dark:text-red-400 shadow-sm">
             <h3 className="font-bold text-xl mb-2">Oops!</h3>
             <p>{error}</p>
-            <button onClick={fetchAssets} className="mt-4 bg-white border border-red-200 px-6 py-2 rounded-xl hover:bg-red-100 font-semibold transition-colors">Try Again</button>
+            <button onClick={fetchAssets} className="mt-4 bg-white dark:bg-gray-800 border border-red-200 dark:border-red-800 px-6 py-2 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/50 font-semibold transition-colors">Try Again</button>
           </div>
         )}
 
@@ -92,7 +92,7 @@ function PublicAssetsList({ isDashboardMode = false }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {filteredAssets.length > 0 ? (
               filteredAssets.map(asset => (
-                <div key={asset.id} className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col group">
+                <div key={asset.id} className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col group">
                   
                   {/* Card Header (Gradient & Status) */}
                   <div className={`p-6 text-white relative overflow-hidden ${
@@ -117,32 +117,32 @@ function PublicAssetsList({ isDashboardMode = false }) {
                   </div>
 
                   {/* Card Body (Details) */}
-                  <div className="p-6 flex-1 flex flex-col justify-between bg-white/70 backdrop-blur-md">
+                  <div className="p-6 flex-1 flex flex-col justify-between bg-white/70 dark:bg-gray-800/70 backdrop-blur-md">
                     <div className="space-y-3 mb-6">
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-50 dark:border-gray-700">
                         <span className="text-xs uppercase font-bold text-gray-400 tracking-wider">Location</span>
-                        <span className="font-semibold text-gray-800 text-sm">{asset.location}</span>
+                        <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm">{asset.location}</span>
                       </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-50 dark:border-gray-700">
                         <span className="text-xs uppercase font-bold text-gray-400 tracking-wider">Category</span>
-                        <span className="font-semibold text-gray-800 text-sm">{asset.category}</span>
+                        <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm">{asset.category}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-xs uppercase font-bold text-gray-400 tracking-wider">Condition</span>
-                        <span className="font-semibold text-gray-800 text-sm">{asset.condition}</span>
+                        <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm">{asset.condition}</span>
                       </div>
                     </div>
 
                     <div className="flex gap-2">
                       <Link 
                         to={isDashboardMode ? `/dashboard/public/asset/${asset.id}` : `/public/asset/${asset.id}`}
-                        className="flex-1 bg-gray-50 text-violet-600 border border-violet-100 font-bold py-3 rounded-xl hover:bg-violet-600 hover:text-white transition-all shadow-sm hover:shadow-md text-center group-hover:bg-violet-50"
+                        className="flex-1 bg-gray-50 dark:bg-gray-700 text-violet-600 dark:text-violet-400 border border-violet-100 dark:border-violet-800 font-bold py-3 rounded-xl hover:bg-violet-600 hover:text-white dark:hover:bg-violet-600 transition-all shadow-sm hover:shadow-md text-center group-hover:bg-violet-50 dark:group-hover:bg-violet-900/30"
                       >
                         View Details
                       </Link>
                       <button
                         onClick={() => setQrAsset(asset)}
-                        className="p-3 bg-gray-50 text-gray-600 border border-gray-100 rounded-xl hover:bg-gray-200 transition-all shadow-sm hover:shadow-md flex items-center justify-center"
+                        className="p-3 bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-600 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all shadow-sm hover:shadow-md flex items-center justify-center"
                         title="Show QR Code"
                       >
                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
@@ -153,9 +153,9 @@ function PublicAssetsList({ isDashboardMode = false }) {
                 </div>
               ))
             ) : (
-              <div className="col-span-full bg-white rounded-3xl p-12 text-center shadow-sm border border-gray-100">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">No Assets Found</h3>
-                <p className="text-gray-500">We couldn't find any assets matching your search criteria.</p>
+              <div className="col-span-full bg-white dark:bg-gray-800 rounded-3xl p-12 text-center shadow-sm border border-gray-100 dark:border-gray-700">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">No Assets Found</h3>
+                <p className="text-gray-500 dark:text-gray-400">We couldn't find any assets matching your search criteria.</p>
               </div>
             )}
           </div>
@@ -165,21 +165,21 @@ function PublicAssetsList({ isDashboardMode = false }) {
         {qrAsset && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setQrAsset(null)}></div>
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden z-10 transform transition-all p-6 border border-gray-100">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden z-10 transform transition-all p-6 border border-gray-100 dark:border-gray-700">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="font-bold text-gray-800 text-lg leading-tight">{qrAsset.name}</h3>
-                  <p className="text-gray-500 text-sm mt-1">{qrAsset.code} · {qrAsset.location || 'No Location'}</p>
+                  <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg leading-tight">{qrAsset.name}</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{qrAsset.code} · {qrAsset.location || 'No Location'}</p>
                 </div>
-                <button onClick={() => setQrAsset(null)} className="text-gray-400 hover:text-gray-600 p-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <button onClick={() => setQrAsset(null)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
-              <div className="flex justify-center bg-gray-50 p-6 rounded-2xl mb-5 border border-gray-100">
+              <div className="flex justify-center bg-gray-50 dark:bg-gray-700 p-6 rounded-2xl mb-5 border border-gray-100 dark:border-gray-600">
                 <QRCodeSVG value={`${window.location.origin}/public/asset/${qrAsset.id}`} size={180} level="H" />
               </div>
               <div className="flex gap-3">
-                <button onClick={() => copyLink(qrAsset.id)} className="flex-1 bg-gray-50 text-gray-700 border border-gray-200 font-bold py-2.5 rounded-xl hover:bg-gray-100 transition-colors text-sm">
+                <button onClick={() => copyLink(qrAsset.id)} className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 font-bold py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm">
                   Copy Link
                 </button>
                 <Link to={isDashboardMode ? `/dashboard/public/asset/${qrAsset.id}` : `/public/asset/${qrAsset.id}`} className="flex-1 bg-violet-600 text-white font-bold py-2.5 rounded-xl hover:bg-violet-700 transition-colors text-sm text-center flex items-center justify-center">

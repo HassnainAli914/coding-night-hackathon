@@ -215,7 +215,7 @@ function PublicAsset({ isDashboardMode = false }) {
   }
 
   return (
-    <div className={`flex min-h-screen flex-col bg-gray-50 text-gray-900 font-sans ${isDashboardMode ? 'w-full' : ''}`}>
+    <div className={`flex min-h-screen flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans ${isDashboardMode ? 'w-full' : ''}`}>
       {!isDashboardMode && <Header isPublicRoute={true} />}
       
       <main className={`flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-8 ${isDashboardMode ? 'pt-8' : 'pt-28 md:pt-36 lg:pt-40'}`}>
@@ -246,24 +246,24 @@ function PublicAsset({ isDashboardMode = false }) {
               </div>
             </div>
 
-            <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-lg border border-white p-5 mt-4">
-              <div className="flex justify-between py-2 border-b border-gray-100/50">
-                <span className="text-gray-500 font-medium">Location</span>
-                <span className="font-bold text-gray-800 text-right">{asset.location}</span>
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-3xl shadow-lg border border-white dark:border-gray-700 p-5 mt-4">
+              <div className="flex justify-between py-2 border-b border-gray-100/50 dark:border-gray-700/50">
+                <span className="text-gray-500 dark:text-gray-400 font-medium">Location</span>
+                <span className="font-bold text-gray-800 dark:text-gray-100 text-right">{asset.location}</span>
               </div>
-              <div className="flex justify-between py-2 border-b border-gray-100/50">
-                <span className="text-gray-500 font-medium">Category</span>
-                <span className="font-bold text-gray-800 text-right">{asset.category}</span>
+              <div className="flex justify-between py-2 border-b border-gray-100/50 dark:border-gray-700/50">
+                <span className="text-gray-500 dark:text-gray-400 font-medium">Category</span>
+                <span className="font-bold text-gray-800 dark:text-gray-100 text-right">{asset.category}</span>
               </div>
               <div className="flex justify-between py-2">
-                <span className="text-gray-500 font-medium">Condition</span>
-                <span className="font-bold text-gray-800 text-right">{asset.condition}</span>
+                <span className="text-gray-500 dark:text-gray-400 font-medium">Condition</span>
+                <span className="font-bold text-gray-800 dark:text-gray-100 text-right">{asset.condition}</span>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-gray-100/50">
+              <div className="mt-4 pt-4 border-t border-gray-100/50 dark:border-gray-700/50">
                 <button
                   onClick={() => setShowQr(true)}
-                  className="w-full flex items-center justify-center gap-2 bg-gray-50 text-gray-700 border border-gray-200 font-bold py-2.5 rounded-xl hover:bg-gray-100 transition-colors text-sm shadow-sm"
+                  className="w-full flex items-center justify-center gap-2 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 font-bold py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm shadow-sm"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
                   Show QR Label
@@ -277,13 +277,13 @@ function PublicAsset({ isDashboardMode = false }) {
         {!isSubmitSuccess ? (
           <>
             {!triageResult ? (
-              <div className="bg-white rounded-3xl shadow-xl shadow-violet-100/50 border border-violet-50 p-6 md:p-8 mb-8 transform transition-all duration-300">
-                <h3 className="font-extrabold text-2xl text-gray-800 mb-2">Report an Issue</h3>
-                <p className="text-base text-gray-500 mb-6">Describe the problem below. Our AI will analyze it and suggest the right category and priority.</p>
+              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl shadow-violet-100/50 dark:shadow-none border border-violet-50 dark:border-gray-700 p-6 md:p-8 mb-8 transform transition-all duration-300">
+                <h3 className="font-extrabold text-2xl text-gray-800 dark:text-gray-100 mb-2">Report an Issue</h3>
+                <p className="text-base text-gray-500 dark:text-gray-400 mb-6">Describe the problem below. Our AI will analyze it and suggest the right category and priority.</p>
                 
                 <form onSubmit={handleTriage}>
                   <textarea
-                    className="w-full bg-gray-50 border-gray-200 rounded-2xl focus:ring-violet-500 focus:border-violet-500 mb-4 p-4 text-base transition-colors"
+                    className="w-full bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-violet-500 focus:border-violet-500 mb-4 p-4 text-base transition-colors text-gray-900 dark:text-gray-100"
                     rows="5"
                     placeholder="e.g. The AC is blowing hot air and making a rattling sound..."
                     value={issueDescription}
@@ -293,14 +293,14 @@ function PublicAsset({ isDashboardMode = false }) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <input
                       type="text"
-                      className="w-full bg-gray-50 border-gray-200 rounded-2xl focus:ring-violet-500 focus:border-violet-500 p-4 text-base transition-colors"
+                      className="w-full bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-violet-500 focus:border-violet-500 p-4 text-base transition-colors text-gray-900 dark:text-gray-100"
                       placeholder="Your name (optional)"
                       value={reporterName}
                       onChange={(e) => setReporterName(e.target.value)}
                     />
                     <input
                       type="email"
-                      className="w-full bg-gray-50 border-gray-200 rounded-2xl focus:ring-violet-500 focus:border-violet-500 p-4 text-base transition-colors"
+                      className="w-full bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-violet-500 focus:border-violet-500 p-4 text-base transition-colors text-gray-900 dark:text-gray-100"
                       placeholder="Email (optional)"
                       value={reporterEmail}
                       onChange={(e) => setReporterEmail(e.target.value)}
@@ -323,51 +323,51 @@ function PublicAsset({ isDashboardMode = false }) {
                 </form>
               </div>
             ) : (
-              <div className="bg-white rounded-3xl shadow-xl shadow-violet-100/50 border border-violet-50 p-6 md:p-8 mb-8 transform transition-all duration-300">
+              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl shadow-violet-100/50 dark:shadow-none border border-violet-50 dark:border-gray-700 p-6 md:p-8 mb-8 transform transition-all duration-300">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-violet-100 to-indigo-100 rounded-2xl flex items-center justify-center shadow-inner">
+                  <div className="w-12 h-12 bg-gradient-to-br from-violet-100 to-indigo-100 dark:from-violet-900/50 dark:to-indigo-900/50 rounded-2xl flex items-center justify-center shadow-inner">
                     <span className="text-xl">🤖</span>
                   </div>
-                  <h3 className="font-extrabold text-2xl text-gray-800">AI Triage Results</h3>
+                  <h3 className="font-extrabold text-2xl text-gray-800 dark:text-gray-100">AI Triage Results</h3>
                 </div>
 
                 {triageResult.warning && (
-                  <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 text-sm text-red-700 font-medium shadow-sm">
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-2xl p-4 mb-6 text-sm text-red-700 dark:text-red-300 font-medium shadow-sm">
                     <strong>⚠️ Warning:</strong> {triageResult.warning}
                   </div>
                 )}
 
-                <div className="bg-gray-50 rounded-2xl p-5 mb-6 space-y-5 text-base border border-gray-100">
+                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-5 mb-6 space-y-5 text-base border border-gray-100 dark:border-gray-700">
                   <div>
-                    <span className="text-gray-500 text-xs uppercase font-bold tracking-wider block mb-2">Structured Description</span>
-                    <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-gray-800 whitespace-pre-wrap">
+                    <span className="text-gray-500 dark:text-gray-400 text-xs uppercase font-bold tracking-wider block mb-2">Structured Description</span>
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
                       {triageResult.description}
                     </div>
                   </div>
                   {triageResult.possible_solution && (
                     <div>
-                      <span className="text-violet-600 text-xs uppercase font-bold tracking-wider block mb-2 flex items-center gap-1.5">
+                      <span className="text-violet-600 dark:text-violet-400 text-xs uppercase font-bold tracking-wider block mb-2 flex items-center gap-1.5">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                         Possible Solution
                       </span>
-                      <div className="bg-violet-50 p-4 rounded-xl border border-violet-100 shadow-sm text-violet-900 whitespace-pre-wrap font-medium">
+                      <div className="bg-violet-50 dark:bg-violet-900/20 p-4 rounded-xl border border-violet-100 dark:border-violet-800/30 shadow-sm text-violet-900 dark:text-violet-100 whitespace-pre-wrap font-medium">
                         {triageResult.possible_solution}
                       </div>
                     </div>
                   )}
                   {triageResult.missing_information && triageResult.missing_information.length > 0 && (
-                    <div className="bg-rose-50 border border-rose-100 rounded-2xl p-5 mt-4 shadow-sm">
-                      <span className="text-rose-700 text-xs font-extrabold uppercase tracking-wider block mb-2">Missing Details Requested by AI</span>
-                      <p className="text-rose-600 text-sm mb-4">Please provide these details for a better solution (or submit directly if you prefer).</p>
+                    <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/30 rounded-2xl p-5 mt-4 shadow-sm">
+                      <span className="text-rose-700 dark:text-rose-400 text-xs font-extrabold uppercase tracking-wider block mb-2">Missing Details Requested by AI</span>
+                      <p className="text-rose-600 dark:text-rose-300 text-sm mb-4">Please provide these details for a better solution (or submit directly if you prefer).</p>
                       <div className="space-y-4">
                         {triageResult.missing_information.map((info, i) => (
                           <div key={i}>
-                            <label className="block text-sm font-bold text-rose-900 mb-1.5">{info}</label>
+                            <label className="block text-sm font-bold text-rose-900 dark:text-rose-200 mb-1.5">{info}</label>
                             <input 
                               type="text" 
-                              className="w-full border-rose-200 rounded-xl focus:ring-rose-500 focus:border-rose-500 p-3 text-base bg-white transition-colors shadow-sm" 
+                              className="w-full border-rose-200 dark:border-rose-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 p-3 text-base bg-white dark:bg-gray-800 transition-colors shadow-sm text-gray-900 dark:text-gray-100" 
                               placeholder="Your answer..."
                               value={missingAnswers[info] || ''}
                               onChange={(e) => onAnswerChange(info, e.target.value)}
@@ -391,10 +391,10 @@ function PublicAsset({ isDashboardMode = false }) {
 
                 <form onSubmit={handleSubmitIssue} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Issue Title</label>
+                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Issue Title</label>
                     <input
                       type="text"
-                      className="w-full bg-gray-50 border-gray-200 rounded-xl focus:ring-violet-500 focus:border-violet-500 p-3 text-base transition-colors"
+                      className="w-full bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-violet-500 focus:border-violet-500 p-3 text-base transition-colors text-gray-900 dark:text-gray-100"
                       value={editedTitle}
                       onChange={(e) => setEditedTitle(e.target.value)}
                       required
@@ -402,9 +402,9 @@ function PublicAsset({ isDashboardMode = false }) {
                   </div>
                   <div className="grid grid-cols-1 gap-4">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1.5">Priority</label>
+                      <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Priority</label>
                       <select
-                        className="w-full bg-gray-50 border-gray-200 rounded-xl focus:ring-violet-500 focus:border-violet-500 p-3 text-base transition-colors"
+                        className="w-full bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-violet-500 focus:border-violet-500 p-3 text-base transition-colors text-gray-900 dark:text-gray-100"
                         value={editedPriority}
                         onChange={(e) => setEditedPriority(e.target.value)}
                       >
@@ -420,7 +420,7 @@ function PublicAsset({ isDashboardMode = false }) {
                     <button
                       type="button"
                       onClick={() => setTriageResult(null)}
-                      className="sm:w-1/3 border-2 border-gray-200 text-gray-700 font-bold py-3.5 rounded-xl hover:bg-gray-50 transition-colors text-base"
+                      className="sm:w-1/3 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold py-3.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-base"
                     >
                       ← Back
                     </button>
@@ -444,19 +444,19 @@ function PublicAsset({ isDashboardMode = false }) {
             )}
           </>
         ) : (
-          <div className="bg-white rounded-3xl shadow-xl shadow-green-100/50 border border-green-50 p-8 text-center mb-8 transform transition-all duration-300">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-200">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl shadow-green-100/50 dark:shadow-none border border-green-50 dark:border-gray-700 p-8 text-center mb-8 transform transition-all duration-300">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-200 dark:shadow-none">
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="font-extrabold text-2xl text-gray-800 mb-2">Report Submitted Successfully!</h3>
+            <h3 className="font-extrabold text-2xl text-gray-800 dark:text-gray-100 mb-2">Report Submitted Successfully!</h3>
             {createdTicketId && (
-              <p className="text-base text-gray-600 mb-2">
-                Ticket ID: <span className="font-mono font-bold text-violet-600 bg-violet-50 px-2 py-1 rounded">{createdTicketId}</span>
+              <p className="text-base text-gray-600 dark:text-gray-400 mb-2">
+                Ticket ID: <span className="font-mono font-bold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/30 px-2 py-1 rounded">{createdTicketId}</span>
               </p>
             )}
-            <p className="text-base text-gray-500 mb-8 max-w-md mx-auto">Thank you. The maintenance team has been notified and a ticket has been generated. You can track its status anytime.</p>
+            <p className="text-base text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">Thank you. The maintenance team has been notified and a ticket has been generated. You can track its status anytime.</p>
             
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               {createdTicketId && (
@@ -469,7 +469,7 @@ function PublicAsset({ isDashboardMode = false }) {
               )}
               <button 
                 onClick={resetForm}
-                className="flex-1 bg-white border-2 border-gray-200 text-gray-700 font-bold py-3.5 rounded-xl hover:bg-gray-50 transition-colors"
+                className="flex-1 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold py-3.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               >
                 Report Another Issue
               </button>
@@ -483,20 +483,20 @@ function PublicAsset({ isDashboardMode = false }) {
         {showQr && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setShowQr(false)}></div>
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden z-10 transform transition-all p-6 border border-gray-100">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden z-10 transform transition-all p-6 border border-gray-100 dark:border-gray-700">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="font-bold text-gray-800 text-lg leading-tight">{asset.name}</h3>
-                  <p className="text-gray-500 text-sm mt-1">{asset.code} · {asset.location || 'No Location'}</p>
+                  <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg leading-tight">{asset.name}</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{asset.code} · {asset.location || 'No Location'}</p>
                 </div>
-                <button onClick={() => setShowQr(false)} className="text-gray-400 hover:text-gray-600 p-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <button onClick={() => setShowQr(false)} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
-              <div className="flex justify-center bg-gray-50 p-6 rounded-2xl mb-5 border border-gray-100">
+              <div className="flex justify-center bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl mb-5 border border-gray-100 dark:border-gray-700">
                 <QRCodeSVG value={`${window.location.origin}/public/asset/${asset.id}`} size={180} level="H" />
               </div>
-              <button onClick={copyLink} className="w-full bg-gray-50 text-gray-700 border border-gray-200 font-bold py-3 rounded-xl hover:bg-gray-100 transition-colors text-sm">
+              <button onClick={copyLink} className="w-full bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 font-bold py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm">
                 Copy Link to Clipboard
               </button>
             </div>
