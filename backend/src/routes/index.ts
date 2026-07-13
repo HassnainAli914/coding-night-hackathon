@@ -7,6 +7,7 @@ import aiRoutes from './ai.routes';
 import categoriesRoutes from './categories.routes';
 import analyticsRoutes from './analytics.routes';
 import maintenanceRoutes from './maintenance.routes';
+import searchRoutes from './search.routes';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/ai', aiRoutes);
 router.use('/categories', categoriesRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/maintenance', maintenanceRoutes);
+router.use('/search', searchRoutes);
 
 export default router;

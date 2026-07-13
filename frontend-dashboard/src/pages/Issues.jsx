@@ -29,6 +29,11 @@ function Issues() {
   const [issueDescription, setIssueDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState(null);
+  
+  // AI Draft flow state
+  const [reportStep, setReportStep] = useState(1); // 1 = Draft, 2 = AI Preview
+  const [aiDraft, setAiDraft] = useState(null);
+  const [draftAnalyzing, setDraftAnalyzing] = useState(false);
 
   // Categories list
   const [categories, setCategories] = useState([]);
@@ -145,37 +150,96 @@ function Issues() {
     fetchCategories();
   }, [statusFilter, priorityFilter, viewMode]);
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
+  const handleAnalyzeDraft = async () => {
     if (!assetCode.trim() || !issueDescription.trim()) return;
-    
-    setSubmitting(true);
+    setDraftAnalyzing(true);
     setFormError(null);
     try {
-      // Find asset category and name first to send to the backend
       const resAssets = await api.get('/api/assets');
       const assetsList = resAssets.data?.assets || [];
       const selectedAsset = assetsList.find(a => a.id === assetCode);
       const assetName = selectedAsset ? selectedAsset.name : 'Asset';
-      const assetCategory = selectedAsset ? selectedAsset.category : 'General';
 
+      const res = await api.post('/api/issues/analyze-draft', {
+        title: `Draft Issue for ${assetName}`,
+        description: issueDescription
+      });
+      
+      if (res.success && res.data?.analysis) {
+        setAiDraft(res.data.analysis);
+        setReportStep(2);
+      } else {
+        setFormError(res.message || "AI Analysis failed.");
+      }
+    } catch (err) {
+      setFormError(err.message || "Failed to analyze draft.");
+    } finally {
+      setDraftAnalyzing(false);
+    }
+  };
+
+  const handleAnalyzeAgain = async (answers) => {
+    if (!assetCode.trim() || !issueDescription.trim()) return;
+    setDraftAnalyzing(true);
+    setFormError(null);
+    try {
+      const resAssets = await api.get('/api/assets');
+      const assetsList = resAssets.data?.assets || [];
+      const selectedAsset = assetsList.find(a => a.id === assetCode);
+      const assetName = selectedAsset ? selectedAsset.name : 'Asset';
+
+      let combinedDescription = issueDescription + '\n\nAdditional Details Provided:';
+      for (const [question, answer] of Object.entries(answers)) {
+        if (answer.trim()) {
+          combinedDescription += `\n- ${question}: ${answer.trim()}`;
+        }
+      }
+
+      const res = await api.post('/api/issues/analyze-draft', {
+        title: `Draft Issue for ${assetName}`,
+        description: combinedDescription
+      });
+      
+      if (res.success && res.data?.analysis) {
+        setAiDraft(res.data.analysis);
+        setIssueDescription(combinedDescription);
+      } else {
+        setFormError(res.message || "AI Analysis failed.");
+      }
+    } catch (err) {
+      setFormError(err.message || "Failed to analyze draft.");
+    } finally {
+      setDraftAnalyzing(false);
+    }
+  };
+
+  const handleFinalSubmit = async (e) => {
+    if (e) e.preventDefault();
+    setSubmitting(true);
+    setFormError(null);
+    try {
       const res = await api.post('/api/issues', {
         asset_id: assetCode,
-        title: `Issue reported for ${assetName}`,
-        description: issueDescription,
-        category: assetCategory,
-        priority: 'Medium'
+        title: aiDraft.title,
+        description: aiDraft.description,
+        category: aiDraft.category,
+        priority: aiDraft.priority,
+        possible_solution: aiDraft.possible_solution,
+        skip_background_ai: true
       });
 
       if (res.success) {
         setAssetCode("");
         setIssueDescription("");
+        setAiDraft(null);
+        setReportStep(1);
         setViewMode('list');
+        fetchIssues();
       } else {
         setFormError(res.message || "Failed to submit issue. Please try again.");
       }
     } catch (err) {
-      setFormError(err.message || "Failed to submit issue. Please try again.");
+      setFormError(err.message || "Failed to submit issue.");
     } finally {
       setSubmitting(false);
     }
@@ -197,6 +261,20 @@ function Issues() {
   };
 
   // Edit Issue Handlers
+  const handleRetryAi = async (id) => {
+    try {
+      const res = await api.post(`/api/issues/${id}/retry-ai`);
+      if (res.success) {
+        alert('AI Retry triggered! The analysis will process in the background. Please refresh in a few seconds.');
+        fetchIssues();
+      } else {
+        alert(res.message || 'Failed to retry AI');
+      }
+    } catch (err) {
+      alert(err.message || 'An error occurred');
+    }
+  };
+
   const openEdit = (issue) => {
     setEditIssue(issue);
     setEditForm({
@@ -299,7 +377,11 @@ function Issues() {
             <div className="sm:flex sm:justify-between sm:items-center mb-8">
               <div className="mb-4 sm:mb-0">
                 <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
-                  {viewMode === 'list' ? 'Issues Center' : 'Report a New Issue'}
+                  {viewMode === 'list' 
+                    ? 'Issues Center' 
+                    : reportStep === 1 
+                      ? 'Draft a New Issue' 
+                      : 'Review AI Recommendation'}
                 </h1>
               </div>
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
@@ -316,20 +398,34 @@ function Issues() {
                 ) : (
                   <>
                     <button 
-                      onClick={() => setViewMode('list')}
+                      onClick={() => {
+                        if (reportStep === 2) setReportStep(1);
+                        else {
+                          setViewMode('list');
+                          setReportStep(1);
+                        }
+                      }}
                       className="btn bg-white border-gray-200 text-gray-800 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
-                      Back to Issues List
+                      {reportStep === 2 ? 'Back to Edit' : 'Cancel'}
                     </button>
-                    <button 
-                      type="submit"
-                      form="issue-form"
-                      onClick={handleSubmit}
-                      disabled={submitting || !assetCode.trim() || !issueDescription.trim()}
-                      className="btn bg-violet-600 text-white hover:bg-violet-700 shadow-sm disabled:opacity-50"
-                    >
-                      {submitting ? 'Analyzing and Submitting...' : 'Submit Report'}
-                    </button>
+                    {reportStep === 1 ? (
+                      <button 
+                        onClick={handleAnalyzeDraft}
+                        disabled={draftAnalyzing || !assetCode.trim() || !issueDescription.trim()}
+                        className="btn bg-blue-600 text-white hover:bg-blue-700 shadow-sm disabled:opacity-50 flex items-center gap-2"
+                      >
+                        {draftAnalyzing ? 'Analyzing...' : '✨ Analyze with AI'}
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={handleFinalSubmit}
+                        disabled={submitting}
+                        className="btn bg-green-600 text-white hover:bg-green-700 shadow-sm disabled:opacity-50 flex items-center gap-2"
+                      >
+                        {submitting ? 'Submitting...' : 'Submit AI Recommendation'}
+                      </button>
+                    )}
                   </>
                 )}
               </div>
@@ -508,7 +604,11 @@ function Issues() {
                   setAssetCode={setAssetCode} 
                   issueDescription={issueDescription} 
                   setIssueDescription={setIssueDescription} 
-                  error={formError} 
+                  error={formError}
+                  reportStep={reportStep}
+                  aiDraft={aiDraft}
+                  handleAnalyzeAgain={handleAnalyzeAgain}
+                  draftAnalyzing={draftAnalyzing}
                 />
               )}
             </div>
@@ -521,57 +621,178 @@ function Issues() {
       {editIssue && (
         <>
           <div className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm" onClick={() => setEditIssue(null)} />
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-lg">
-              <div className="flex justify-between items-center mb-5">
-                <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg">Edit Issue Details</h3>
-                <button onClick={() => setEditIssue(null)} className="text-gray-400 hover:text-gray-600">
-                  <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
-                </button>
-              </div>
-              {editError && <p className="text-red-500 text-sm mb-3">{editError}</p>}
-              <form onSubmit={handleEditSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Title *</label>
-                  <input className="form-input w-full" value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} required />
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto mt-10">
+              <div className="flex justify-between items-center mb-5 sticky top-0 bg-white dark:bg-gray-800 pb-2 z-10 border-b border-gray-100 dark:border-gray-700">
+                <div className="flex items-center gap-3">
+                  <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg">Issue Details & Analysis</h3>
+                  {editIssue.ai_status === 'Pending' && <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full animate-pulse flex items-center gap-1">⏳ AI Processing...</span>}
+                  {editIssue.ai_status === 'Failed' && <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full flex items-center gap-1">❌ AI Failed</span>}
+                  {editIssue.ai_status === 'Completed' && <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full flex items-center gap-1">✨ AI Analyzed</span>}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Description *</label>
-                  <textarea rows="4" className="form-textarea w-full" value={editForm.description} onChange={e => setEditForm({...editForm, description: e.target.value})} required />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Priority</label>
-                    <CustomDropdown
-                      options={['Low', 'Medium', 'High', 'Critical']}
-                      value={editForm.priority}
-                      onChange={val => setEditForm({...editForm, priority: val})}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Category</label>
-                    <CustomDropdown
-                      options={categories.map(c => c.name)}
-                      value={editForm.category}
-                      onChange={val => setEditForm({...editForm, category: val})}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Status</label>
-                  <CustomDropdown
-                    options={['Reported', 'Assigned', 'Inspection Started', 'Resolved']}
-                    value={editForm.status}
-                    onChange={val => setEditForm({...editForm, status: val})}
-                  />
-                </div>
-                <div className="flex gap-2 pt-2 justify-end">
-                  <button type="button" onClick={() => setEditIssue(null)} className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300">Cancel</button>
-                  <button type="submit" disabled={editLoading} className="btn bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-50">
-                    {editLoading ? 'Saving...' : 'Save Changes'}
+                <div className="flex items-center gap-2">
+                  {(editIssue.ai_status === 'Failed' || editIssue.ai_status === 'Pending') && (
+                    <button onClick={() => handleRetryAi(editIssue.id)} className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 py-1.5 px-3 rounded-lg font-medium transition-colors">
+                      Retry AI Analysis
+                    </button>
+                  )}
+                  <button onClick={() => setEditIssue(null)} className="text-gray-400 hover:text-gray-600 ml-2">
+                    <svg className="w-6 h-6 fill-current" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
                   </button>
                 </div>
-              </form>
+              </div>
+              
+              {editError && <p className="text-red-500 text-sm mb-3">{editError}</p>}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column: Original Report & Editable Fields */}
+                <div className="space-y-5">
+                  <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Original User Submission</h4>
+                    <div className="mb-3">
+                      <span className="text-xs text-gray-400 block mb-1">Raw Title</span>
+                      <p className="text-gray-800 dark:text-gray-200 font-medium">{editIssue.title}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-400 block mb-1">Raw Description</span>
+                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-sm">{editIssue.description}</p>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleEditSubmit} className="space-y-4 pt-2">
+                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Modify Ticket</h4>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Update Title</label>
+                      <input className="form-input w-full" value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Update Description</label>
+                      <textarea rows="3" className="form-textarea w-full" value={editForm.description} onChange={e => setEditForm({...editForm, description: e.target.value})} required />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Priority</label>
+                        <CustomDropdown options={['Low', 'Medium', 'High', 'Critical']} value={editForm.priority} onChange={val => setEditForm({...editForm, priority: val})} />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Category</label>
+                        <CustomDropdown options={categories.map(c => c.name)} value={editForm.category} onChange={val => setEditForm({...editForm, category: val})} />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Status</label>
+                      <CustomDropdown options={['Reported', 'Assigned', 'Inspection Started', 'Resolved']} value={editForm.status} onChange={val => setEditForm({...editForm, status: val})} />
+                    </div>
+                    <div className="flex gap-2 pt-2 justify-end">
+                      <button type="submit" disabled={editLoading} className="btn bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-50 w-full">
+                        {editLoading ? 'Saving...' : 'Save Manual Changes'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                {/* Right Column: AI Analysis */}
+                <div>
+                  <div className="bg-violet-50/50 dark:bg-violet-900/10 p-5 rounded-xl border border-violet-100 dark:border-violet-900/30 h-full">
+                    <h4 className="text-sm font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      AI Executive Analysis
+                    </h4>
+
+                    {editIssue.ai_status === 'Completed' ? (
+                      <div className="space-y-4">
+                        <div>
+                          <span className="text-xs text-violet-500/70 block mb-1">Suggested Title</span>
+                          <p className="text-gray-900 dark:text-gray-100 font-semibold">{editIssue.ai_title}</p>
+                        </div>
+                        <div>
+                          <span className="text-xs text-violet-500/70 block mb-1">Executive Summary</span>
+                          <p className="text-gray-700 dark:text-gray-300 text-sm">{editIssue.ai_summary}</p>
+                        </div>
+                        <div>
+                          <span className="text-xs text-violet-500/70 block mb-1">Organized Description</span>
+                          <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap">{editIssue.ai_description}</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-violet-100/50 dark:border-violet-900/20">
+                            <span className="text-xs text-violet-500/70 block mb-1">Detected Category</span>
+                            <p className="font-medium text-sm text-gray-800 dark:text-gray-200">{editIssue.ai_category}</p>
+                          </div>
+                          <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-violet-100/50 dark:border-violet-900/20">
+                            <span className="text-xs text-violet-500/70 block mb-1">Estimated Priority</span>
+                            <p className={`font-medium text-sm ${
+                              editIssue.ai_priority === 'Critical' ? 'text-red-600' :
+                              editIssue.ai_priority === 'High' ? 'text-orange-600' :
+                              editIssue.ai_priority === 'Medium' ? 'text-yellow-600' : 'text-green-600'
+                            }`}>{editIssue.ai_priority}</p>
+                          </div>
+                        </div>
+
+                        {editIssue.ai_keywords && editIssue.ai_keywords.length > 0 && (
+                          <div>
+                            <span className="text-xs text-violet-500/70 block mb-2">Keywords</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {editIssue.ai_keywords.map((kw, i) => (
+                                <span key={i} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs px-2 py-1 rounded-full text-gray-600 dark:text-gray-300">
+                                  {kw}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {editIssue.ai_missing_information && editIssue.ai_missing_information.length > 0 && (
+                          <div>
+                            <span className="text-xs text-rose-500/70 block mb-2">Missing Information Detected</span>
+                            <ul className="list-disc list-inside text-xs text-rose-600 dark:text-rose-400 space-y-1">
+                              {editIssue.ai_missing_information.map((info, i) => (
+                                <li key={i}>{info}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        <div className="flex justify-end mt-4">
+                          <button 
+                            onClick={() => {
+                              setEditForm({
+                                ...editForm,
+                                title: editIssue.ai_title || editForm.title,
+                                description: editIssue.ai_description || editForm.description,
+                                category: editIssue.ai_category || editForm.category,
+                                priority: editIssue.ai_priority || editForm.priority
+                              });
+                            }}
+                            className="text-xs bg-violet-600 hover:bg-violet-700 text-white py-1.5 px-3 rounded-lg transition-colors flex items-center gap-1 shadow-sm"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                            </svg>
+                            Apply AI Suggestions to Form
+                          </button>
+                        </div>
+                      </div>
+                    ) : editIssue.ai_status === 'Pending' ? (
+                      <div className="flex flex-col items-center justify-center h-48 text-violet-500 opacity-60">
+                        <svg className="w-8 h-8 animate-spin mb-3" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p className="text-sm font-medium">Analyzing report securely...</p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-48 text-gray-400">
+                        <svg className="w-10 h-10 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <p className="text-sm">AI Analysis Failed or Unavailable</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </>
