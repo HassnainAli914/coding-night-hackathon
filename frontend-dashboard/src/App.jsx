@@ -4,6 +4,7 @@ import {
   Route,
   useLocation
 } from 'react-router-dom';
+import PublicDashboardRedirectRoute from './components/PublicDashboardRedirectRoute';
 
 import './css/style.css';
 
@@ -86,9 +87,9 @@ function App() {
             <AssetDetails />
           </PrivateRoute>
         } />
-        <Route path="/public/assets" element={<PublicAssetsList />} />
-        <Route path="/public/asset/:id" element={<PublicAsset />} />
-        <Route path="/track/:ticketId?" element={<TrackTicket />} />
+        <Route path="/public/assets" element={<PublicDashboardRedirectRoute><PublicAssetsList /></PublicDashboardRedirectRoute>} />
+        <Route path="/public/asset/:id" element={<PublicDashboardRedirectRoute><PublicAsset /></PublicDashboardRedirectRoute>} />
+        <Route path="/track/:ticketId?" element={<PublicDashboardRedirectRoute><TrackTicket /></PublicDashboardRedirectRoute>} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/reset-password" element={<ResetPassword />} />
