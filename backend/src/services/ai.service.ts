@@ -11,6 +11,13 @@ export interface TriageResult {
   missing_information?: string[];
 }
 
+interface OpenRouterResponse {
+  error?: { message?: string; [key: string]: unknown };
+  choices?: Array<{
+    message?: { content?: string };
+  }>;
+}
+
 // Priority-ordered list of free OpenRouter models
 const FREE_MODELS = [
   'nvidia/nemotron-3-ultra-550b-a55b:free',
@@ -106,7 +113,7 @@ Always respond with ONLY valid JSON in this exact format (no markdown, no explan
       throw new Error(`HTTP ${response.status}: ${errBody}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as OpenRouterResponse;
 
     // Check for OpenRouter-level error (model unavailable, rate limited, etc.)
     if (data?.error) {
