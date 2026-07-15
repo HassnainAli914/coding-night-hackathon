@@ -62,4 +62,9 @@ export const config = {
 
   // Logging
   logLevel: optionalEnv('LOG_LEVEL', 'debug'),
+
+  // OpenRouter AI (model list is priority-managed in ai.service.ts)
+  openrouter: {
+    apiKey: optionalEnv('OPENROUTER_API_KEY', ''),
+  },
 } as const;

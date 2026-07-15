@@ -17,13 +17,14 @@ export const triageComplaint = asyncHandler(async (req: AuthRequest, res: Respon
 
   const triage = await aiService.triageComplaint(complaintText, asset_context);
 
-  // Map to the shape the public issue form expects
+  // Build the 'analysis' shape that PublicAsset.jsx reads
   const analysis = {
     title: triage.title,
     category: triage.category,
     priority: triage.priority,
-    description: description || complaint,
-    possible_solution: [triage.initial_checks, triage.warning].filter(Boolean).join(' '),
+    description: description || complaint || complaintText,
+    possible_solution: triage.possible_solution,
+    missing_information: triage.missing_information ?? [],
   };
 
   ApiResponse.success(res, { triage, analysis }, 'AI issue triage generated successfully');
