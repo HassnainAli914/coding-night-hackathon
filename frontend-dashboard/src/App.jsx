@@ -33,7 +33,6 @@ import DashboardTrackTicket from './pages/DashboardTrackTicket';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import TechnicianConsole from './pages/TechnicianConsole';
 import MaintenanceRecords from './pages/MaintenanceRecords';
-import PrivateRoute from './components/PrivateRoute';
 
 function App() {
 
