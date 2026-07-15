@@ -73,6 +73,12 @@ export const listIssues = asyncHandler(async (req: AuthRequest, res: Response): 
   ApiResponse.success(res, { issues }, 'Issues listed successfully');
 });
 
+export const trackIssue = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
+  const id = req.params.id as string;
+  const ticket = await issueService.trackIssue(id);
+  ApiResponse.success(res, { ticket }, 'Ticket retrieved successfully');
+});
+
 export const updateIssue = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
   const id = req.params.id as string;
   const ticket = await issueService.updateIssue(id, req.body);

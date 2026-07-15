@@ -275,6 +275,22 @@ export class IssueService {
 
     return true;
   }
+
+  async trackIssue(ticketId: string) {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('issues')
+      .select('*, asset:assets(id, name, location, code), technician:profiles!assigned_technician_id(id, name, email)')
+      .eq('issue_number', ticketId.trim().toUpperCase())
+      .single();
+
+    if (error || !data) {
+      logger.error(`Track issue error: ${error?.message || 'Not found'}`);
+      throw new AppError('Issue ticket not found', 404);
+    }
+
+    return data;
+  }
 }
 
 export const issueService = new IssueService();

@@ -7,6 +7,9 @@ const router = Router();
 // Public issue reporting endpoint
 router.post('/', optionalAuth, issuesController.createIssue);
 
+// Public track endpoint
+router.get('/track/:id', optionalAuth, issuesController.trackIssue);
+
 // Protected routes (Admin + Technician/Worker/Teacher)
 router.get('/', requireAuth, issuesController.listIssues);
 router.post('/:id/inspect', requireAuth, requireRole(['admin', 'technician', 'worker', 'teacher']), issuesController.startInspection);
